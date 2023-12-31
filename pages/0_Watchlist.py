@@ -2,79 +2,58 @@ from typing import Any
 import numpy as np
 import streamlit as st
 import pandas as pd
+from streamlit_gsheets import GSheetsConnection
+import gspread
+from gspread_dataframe import set_with_dataframe
+from google.oauth2 import service_account
+from modules.functions import select_table
+from modules.config import jscode_buy_range
+from df2gspread import df2gspread as d2g
 
+def watchlist() -> None:
 
-def animation_demo() -> None:
+    # Connect to Google sheet
+    credentials = service_account.Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"],
+        scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive"])
+    client = gspread.authorize(credentials)
+    stocklist = client.open("Database").worksheet("Stock_List")
+    stocklist_df = pd.DataFrame.from_dict(stocklist.get_all_records())
 
-    stock_list = pd.read_csv('csv/Database.csv').sort_values("Buying Distance (%)")
+    # Interactive table
+    df_sel_row = select_table(stocklist_df.loc[stocklist_df['Category'] == 'Watchlist'], jscode_buy_range)
 
-    if st.button("Produce Bullish Watchlist"):
-        watchlist = pd.read_excel('xlsx/IBD Data Tables.xlsx').dropna()
-        watchlist = watchlist.rename(columns=watchlist.iloc[0]).drop(watchlist.index[0])
-        # watchlist['Zack Rank'] = watchlist['Symbol'].apply(lambda x: Zacks_Rank(x))
-        # watchlist = watchlist.loc[(watchlist['Zack Rank'].isin(['Buy', 'Strong Buy']))]
-        # watchlist['PS'] = watchlist['Symbol'].apply(lambda x: get_PSratio(x))
-        # watchlist = watchlist.sort_values(by=['PS'])
-        watchlist['Symbol'].to_csv('csv/IBD.csv', index=False)
-    
-    table = pd.read_csv('csv/IBD.csv')
-    st.table(table)
+    # Display the number of stocks
+    message = "Number of stocks:"
+    num_rows = len(stocklist_df.loc[stocklist_df['Category'] == 'Watchlist'])
+    st.write(f"{message} {num_rows}")
 
-    # Interactive Streamlit elements, like these sliders, return their value.
-    # This gives you an extremely simple interaction model.
-    iterations = st.sidebar.slider("Level of detail", 2, 20, 10, 1)
-    separation = st.sidebar.slider("Separation", 0.7, 2.0, 0.7885)
+    # Buttons to add and delete stocks from the table
+    if not df_sel_row.empty:
 
-    # Non-interactive elements return a placeholder to their location
-    # in the app. Here we're storing progress_bar to update it later.
-    progress_bar = st.sidebar.progress(0)
+        df_sel_row = df_sel_row.drop(columns='_selectedRowNodeInfo', axis=1)
 
-    # These two elements will be filled in later, so we create a placeholder
-    # for them using st.empty()
-    frame_text = st.sidebar.empty()
-    image = st.empty()
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col1:
+            delete_button = st.button('Delete')
+        with col2:
+            add_to_portfolio_button = st.button('Add to portfolio')
 
-    m, n, s = 960, 640, 400
-    x = np.linspace(-m / s, m / s, num=m).reshape((1, m))
-    y = np.linspace(-n / s, n / s, num=n).reshape((n, 1))
+        if delete_button:
+            stocklist_updated = pd.concat([df_sel_row, stocklist_df]).drop_duplicates(keep=False)
+            stocklist.clear()
+            set_with_dataframe(worksheet=stocklist, dataframe=stocklist_updated, include_index=False, include_column_header=True, resize=True)
+            st.experimental_rerun()
 
-    for frame_num, a in enumerate(np.linspace(0.0, 4 * np.pi, 100)):
-        # Here were setting value for these two elements.
-        progress_bar.progress(frame_num)
-        frame_text.text("Frame %i/100" % (frame_num + 1))
+        # if add_to_portfolio_button:
+        #     stock_list.loc[((stock_list['Ticker'] == df_sel_row['Ticker'][0]) & (stock_list['Category'] == 'Watchlist') &
+        #                     (stock_list['Trading Setup'] == df_sel_row['Trading Setup'][0])), 'Category'] = 'Portfolio'
+        #     stock_list.to_csv('Database.csv', index=False)
+        #     st.experimental_rerun()
 
-        # Performing some fractal wizardry.
-        c = separation * np.exp(1j * a)
-        Z = np.tile(x, (n, 1)) + 1j * np.tile(y, (1, m))
-        C = np.full((n, m), c)
-        M: Any = np.full((n, m), True, dtype=bool)
-        N = np.zeros((n, m))
-
-        for i in range(iterations):
-            Z[M] = Z[M] * Z[M] + C[M]
-            M[np.abs(Z) > 2] = False
-            N[M] = i
-
-        # Update the image placeholder by calling the image() function on it.
-        image.image(1.0 - (N / N.max()), use_column_width=True)
-
-    # We clear elements by calling empty on them.
-    progress_bar.empty()
-    frame_text.empty()
-
-    # Streamlit widgets automatically run the script from top to bottom. Since
-    # this button is not connected to any other logic, it just causes a plain
-    # rerun.
-    st.button("Re-run")
-
-
+# Page config
 st.set_page_config(page_title="Watchlist", page_icon="book")
 st.markdown("# Watchlist")
-st.sidebar.header("Animation Demo")
-st.write(
-    """This app shows how you can use Streamlit to build cool animations.
-It displays an animated fractal based on the the Julia Set. Use the slider
-to tune different parameters."""
-)
+st.sidebar.header("Watchlist")
 
-animation_demo()
+watchlist()
