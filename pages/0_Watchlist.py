@@ -17,7 +17,8 @@ def animation_demo() -> None:
         # watchlist = watchlist.sort_values(by=['PS'])
         watchlist['Symbol'].to_csv('csv/IBD.csv', index=False)
     
-    st.table(watchlist)
+    table = pd.read_csv('csv/IBD.csv')
+    st.table(table)
 
     # Interactive Streamlit elements, like these sliders, return their value.
     # This gives you an extremely simple interaction model.
