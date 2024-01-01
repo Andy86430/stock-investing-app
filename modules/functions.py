@@ -55,7 +55,7 @@ def get_PSratio(Symbol):
 def Zacks_Rank(Symbol):
 
     url = 'https://quote-feed.zacks.com/index?t=' + Symbol
-    downloaded_data = urllib.request.urlopen(url, verify = False)
+    downloaded_data = urllib.request.urlopen(url)
     data = downloaded_data.read()
     data_str = data.decode()
     Z_Rank = ["Strong Buy", "Buy", "Hold", "Sell", "Strong Sell"]
