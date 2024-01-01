@@ -7,4 +7,4 @@ st-gsheets-connection
 streamlit-aggrid
 openpyxl
 yfinance
-urllib3<2.0
+urllib3==1.26.9
