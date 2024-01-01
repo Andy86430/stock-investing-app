@@ -7,4 +7,3 @@ st-gsheets-connection
 streamlit-aggrid
 openpyxl
 yfinance
-urllib
