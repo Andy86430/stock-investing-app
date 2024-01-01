@@ -17,7 +17,8 @@ def run():
     )
     
     url = 'https://quote-feed.zacks.com/index?t=' + "AAPL"
-    downloaded_data = urllib.request.urlopen(url)
+    downloaded_data = urllib.request.urlopen(url).read()
+    st.write(downloaded_data)
 
     # Produce a stock watchlist
     st.markdown("""### Actions:""")
