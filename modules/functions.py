@@ -72,4 +72,5 @@ def convert_df(df):
 # Get the live stock price
 def stock_price(Symbol):
     stock_info = yf.Ticker(Symbol).info
-    return stock_info
+    price = stock_info['currentPrice']
+    return price
