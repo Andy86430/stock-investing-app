@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-from modules.functions import Zacks_Rank
 from modules.functions import get_PSratio
+import urllib
 
 @st.cache
 def convert_df(df):
@@ -16,6 +16,9 @@ def run():
         page_icon="chart_with_upwards_trend",
     )
     
+    url = 'https://quote-feed.zacks.com/index?t=' + "AAPL"
+    downloaded_data = urllib.request.urlopen(url)
+
     # Produce a stock watchlist
     st.markdown("""### Actions:""")
     upload = st.file_uploader('Upload "IBD Data Tables.xlsx"', type="xlsx")
