@@ -3,7 +3,7 @@ import pandas as pd
 from modules.functions import get_PSratio
 from modules.functions import convert_df
 from modules.functions import Zacks_Rank
-# from yahoo_fin import stock_info
+from yahoo_fin import stock_info
 from gspread_dataframe import set_with_dataframe
 import gspread
 

@@ -6,3 +6,4 @@ streamlit
 st-gsheets-connection
 streamlit-aggrid
 openpyxl
+yahoo_fin
