@@ -15,12 +15,12 @@ def run():
         page_title="Market Wizard",
         page_icon="chart_with_upwards_trend",
     )
-
-    # Buttons to produce a stock watchlist and refresh
+    
+    # Produce a stock watchlist
     st.markdown("""### Actions:""")
-    if st.button('Produce Bullish List'):
-        upload = st.file_uploader("Upload IBD Data Tables.xlsx", type="xlsx")
-        if upload is not None:
+    upload = st.file_uploader('Upload "IBD Data Tables.xlsx"', type="xlsx")
+    if upload is not None:
+        if st.button('Produce Bullish List'):    
             watchlist = pd.read_excel(upload).dropna()
             watchlist = watchlist.rename(columns=watchlist.iloc[0]).drop(watchlist.index[0])
             watchlist['Zack Rank'] = watchlist['Symbol'].apply(lambda x: Zacks_Rank(x))

@@ -1,9 +1,8 @@
 import pandas as pd
 from st_aggrid import AgGrid, GridUpdateMode, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
-import urllib.request, urllib.parse, urllib.error
-from urllib.request import urlopen
 import json
+import urllib
 
 # Interactive table
 def select_table(df, jscode):
@@ -36,26 +35,12 @@ def select_table(df, jscode):
 
     return pd.DataFrame(grid_table["selected_rows"])
 
-
-# Find the Zack Rank of a stock
-def Zacks_Rank(Symbol):
-
-    url = 'https://quote-feed.zacks.com/index?t=' + Symbol
-    downloaded_data = urllib.request.urlopen(url)
-    data = downloaded_data.read()
-    data_str = data.decode()
-    Z_Rank = ["Strong Buy", "Buy", "Hold", "Sell", "Strong Sell"]
-
-    for Rank in Z_Rank:
-        if data_str.find(Rank) != -1:
-            return Rank
-
 # Find the PS ratio of a stock
 def get_PSratio(Symbol):
 
     api = "e2ddb9db079212837b432d1641354915"
     url = f"https://financialmodelingprep.com/api/v3/ratios-ttm/{Symbol}?apikey={api}"
-    response = urlopen(url)
+    response = urllib.request.urlopen(url)
     data = response.read().decode("utf-8")
     data = json.loads(data)
 
