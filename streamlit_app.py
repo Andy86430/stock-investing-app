@@ -15,6 +15,7 @@ def run():
         page_icon="chart_with_upwards_trend",
     )
 
+    stock_price("AAPL")
     # Produce a bullish watchlist
     st.markdown("""### Actions:""")
     upload = st.file_uploader('Upload "IBD Data Tables.xlsx"', type="xlsx")
