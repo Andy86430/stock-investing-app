@@ -4,6 +4,7 @@ from st_aggrid.grid_options_builder import GridOptionsBuilder
 import json
 import urllib
 import streamlit as st
+import yfinance as yf
 
 # Interactive table
 def select_table(df, jscode):
@@ -67,3 +68,8 @@ def Zacks_Rank(Symbol):
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
+
+# Get the live stock price
+def stock_price(Symbol):
+    price = yf.Ticker(Symbol).info['regularMarketPrice']
+    return price

@@ -3,7 +3,7 @@ import pandas as pd
 from modules.functions import get_PSratio
 from modules.functions import convert_df
 from modules.functions import Zacks_Rank
-import yfinance
+from modules.functions import stock_price
 from gspread_dataframe import set_with_dataframe
 import gspread
 
@@ -37,7 +37,7 @@ def run():
     #     client = gspread.authorize(credentials)
     #     stocklist = client.open("Database").worksheet("Stock_List")
     #     stocklist_df = pd.DataFrame.from_dict(stocklist.get_all_records())
-    #     stocklist_df['Price'] = stocklist_df['Ticker'].apply(lambda x: stock_info.get_live_price(x)).round(2)
+    #     stocklist_df['Price'] = stocklist_df['Ticker'].apply(lambda x: stock_price(x)).round(2)
     #     stocklist_df['Buying Distance (%)'] = (100 * (stocklist_df['Price'] / stocklist_df['Buy Point'] - 1)).round(1)
     #     stocklist_df['Zacks Rank'] = stocklist_df['Ticker'].apply(lambda x: Zacks_Rank(x))
     #     stocklist.clear()
