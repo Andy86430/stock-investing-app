@@ -3,7 +3,7 @@ import pandas as pd
 from modules.functions import get_PSratio
 from modules.functions import convert_df
 from modules.functions import Zacks_Rank
-from yahoo_fin import stock_info
+# from yahoo_fin import stock_info
 from gspread_dataframe import set_with_dataframe
 import gspread
 
@@ -30,18 +30,18 @@ def run():
             st.download_button("Download",csv,"Bullish List.csv","text/csv",key='download-csv')
 
     # Refresh stock prices
-    if st.button('Refresh'):
-        credentials = service_account.Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
-        scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive"])
-        client = gspread.authorize(credentials)
-        stocklist = client.open("Database").worksheet("Stock_List")
-        stocklist_df = pd.DataFrame.from_dict(stocklist.get_all_records())
-        stocklist_df['Price'] = stocklist_df['Ticker'].apply(lambda x: stock_info.get_live_price(x)).round(2)
-        stocklist_df['Buying Distance (%)'] = (100 * (stocklist_df['Price'] / stocklist_df['Buy Point'] - 1)).round(1)
-        stocklist_df['Zacks Rank'] = stocklist_df['Ticker'].apply(lambda x: Zacks_Rank(x))
-        stocklist.clear()
-        set_with_dataframe(worksheet=stocklist, dataframe=stocklist_df, include_index=False, include_column_header=True, resize=True)
+    # if st.button('Refresh'):
+    #     credentials = service_account.Credentials.from_service_account_info(
+    #     st.secrets["gcp_service_account"],
+    #     scopes=["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/drive"])
+    #     client = gspread.authorize(credentials)
+    #     stocklist = client.open("Database").worksheet("Stock_List")
+    #     stocklist_df = pd.DataFrame.from_dict(stocklist.get_all_records())
+    #     stocklist_df['Price'] = stocklist_df['Ticker'].apply(lambda x: stock_info.get_live_price(x)).round(2)
+    #     stocklist_df['Buying Distance (%)'] = (100 * (stocklist_df['Price'] / stocklist_df['Buy Point'] - 1)).round(1)
+    #     stocklist_df['Zacks Rank'] = stocklist_df['Ticker'].apply(lambda x: Zacks_Rank(x))
+    #     stocklist.clear()
+    #     set_with_dataframe(worksheet=stocklist, dataframe=stocklist_df, include_index=False, include_column_header=True, resize=True)
 
     # Useful links
     st.markdown(
