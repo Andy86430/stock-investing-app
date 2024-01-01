@@ -5,4 +5,3 @@ pydeck
 streamlit
 st-gsheets-connection
 streamlit-aggrid
-df2gspread
