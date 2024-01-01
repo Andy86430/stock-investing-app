@@ -3,6 +3,7 @@ from st_aggrid import AgGrid, GridUpdateMode, JsCode
 from st_aggrid.grid_options_builder import GridOptionsBuilder
 import json
 import urllib
+import streamlit as st
 
 # Interactive table
 def select_table(df, jscode):
@@ -48,3 +49,21 @@ def get_PSratio(Symbol):
         return data[0]['priceToSalesRatioTTM']
     except Exception as e:
         return 0
+
+# This funtion scraps each Symbol page and extract the Zacks Rank
+def Zacks_Rank(Symbol):
+
+    url = 'https://quote-feed.zacks.com/index?t=' + Symbol
+    downloaded_data = urllib.request.urlopen(url)
+    data = downloaded_data.read()
+    data_str = data.decode()
+    Z_Rank = ["Strong Buy", "Buy", "Hold", "Sell", "Strong Sell"]
+
+    for Rank in Z_Rank:
+        if data_str.find(Rank) != -1:
+            return Rank
+        
+@st.cache
+def convert_df(df):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')

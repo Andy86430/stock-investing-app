@@ -1,12 +1,8 @@
 import streamlit as st
 import pandas as pd
 from modules.functions import get_PSratio
-import urllib
-
-@st.cache
-def convert_df(df):
-    # IMPORTANT: Cache the conversion to prevent computation on every rerun
-    return df.to_csv().encode('utf-8')
+from modules.functions import convert_df
+from modules.functions import Zacks_Rank
 
 def run():
     
@@ -15,12 +11,8 @@ def run():
         page_title="Market Wizard",
         page_icon="chart_with_upwards_trend",
     )
-    
-    url = 'https://quote-feed.zacks.com/index?t=' + "AAPL"
-    downloaded_data = urllib.request.urlopen(url).read()
-    st.write(downloaded_data)
 
-    # Produce a stock watchlist
+    # Produce a bullish watchlist
     st.markdown("""### Actions:""")
     upload = st.file_uploader('Upload "IBD Data Tables.xlsx"', type="xlsx")
     if upload is not None:
